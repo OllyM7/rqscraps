@@ -14,6 +14,7 @@ from typing import Dict, List, Optional
 import instaloader
 from tqdm import tqdm
 from dotenv import load_dotenv
+import traceback
 
 # Load environment variables
 load_dotenv()
@@ -37,7 +38,7 @@ class InstagramReelsScraper:
         
         # Try to load session if available
         try:
-            self.L.load_session_from_file(os.getenv('INSTAGRAM_USERNAME'))
+            self.L.load_session_from_file('sup3raw3somedud3')
         except:
             print("⚠️  No session file found. Some data might be limited.")
 
@@ -109,6 +110,14 @@ class InstagramReelsScraper:
             return {"error": "Private profile"}
         except Exception as e:
             print(f"❌ Error: {str(e)}")
+            print(f"Exception args: {getattr(e, 'args', None)}")
+            # Try to print response content if available
+            if hasattr(e, 'response') and e.response is not None:
+                try:
+                    print('Raw response:', e.response.text)
+                except Exception as resp_e:
+                    print('Could not print raw response:', resp_e)
+            traceback.print_exc()
             return {"error": str(e)}
 
     def save_to_json(self, data: Dict, username: str) -> None:
